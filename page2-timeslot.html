@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weight Loss Consultation - Select Time</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --teal: #2a9d8f;
+    --teal-light: #e8f5f3;
+    --teal-dark: #1f7a6e;
+    --orange: #e76f51;
+    --orange-light: #fff4f0;
+    --navy: #1a2744;
+    --gray-50: #f8fafb;
+    --gray-100: #f0f4f5;
+    --gray-300: #c8d4d6;
+    --gray-500: #7a9098;
+    --gray-700: #3d5560;
+    --white: #ffffff;
+    --shadow-sm: 0 2px 8px rgba(26,39,68,0.06);
+    --shadow-md: 0 4px 20px rgba(26,39,68,0.10);
+    --radius: 16px;
+    --radius-sm: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--gray-50); min-height: 100vh; color: var(--navy); }
+
+  /* Header */
+  .portal-header {
+    background: var(--white); border-bottom: 1px solid var(--gray-100);
+    padding: 18px 32px; display: flex; align-items: center; gap: 14px;
+    box-shadow: var(--shadow-sm);
+  }
+  .logo-mark { width: 40px; height: 40px; background: linear-gradient(135deg, var(--teal), var(--teal-dark)); border-radius: 10px; display: flex; align-items: center; justify-content: center; color: white; }
+  .portal-header h1 { font-family: 'DM Serif Display', serif; font-size: 20px; }
+  .portal-header span { font-size: 13px; color: var(--gray-500); }
+
+  /* Page wrapper */
+  .page-wrapper { max-width: 720px; margin: 0 auto; padding: 40px 20px 80px; }
+  .back-link {
+    display: inline-flex; align-items: center; gap: 6px;
+    font-size: 13px; color: var(--gray-500); margin-bottom: 28px;
+    cursor: pointer; text-decoration: none; transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--teal); }
+  .page-title { font-family: 'DM Serif Display', serif; font-size: 30px; margin-bottom: 6px; }
+  .page-subtitle { font-size: 14px; color: var(--gray-500); margin-bottom: 28px; }
+
+  /* Provider card — original */
+  .provider-select-card {
+    background: var(--white); border: 2px solid var(--teal);
+    border-radius: var(--radius); padding: 18px 22px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 32px; box-shadow: var(--shadow-sm);
+  }
+  .provider-select-left { display: flex; align-items: center; gap: 14px; }
+  .provider-avatar-sm { width: 44px; height: 44px; background: var(--teal-light); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+  .provider-select-left h3 { font-weight: 600; font-size: 16px; margin-bottom: 2px; }
+  .provider-select-left p { font-size: 12px; color: var(--gray-500); }
+  .provider-select-left .slots { font-size: 12px; color: var(--teal); font-weight: 500; margin-top: 2px; }
+  .selected-badge { display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 500; color: var(--teal); background: var(--teal-light); padding: 6px 12px; border-radius: 20px; }
+
+  /* After booking — original */
+  .after-booking { background: var(--white); border-radius: var(--radius-sm); padding: 16px 20px; margin-bottom: 28px; border: 1px solid var(--gray-100); }
+  .after-booking h4 { font-size: 12px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 10px; }
+  .after-booking ul { list-style: none; display: flex; flex-direction: column; gap: 6px; }
+  .after-booking li { font-size: 13px; color: var(--gray-700); display: flex; align-items: center; gap: 8px; }
+  .after-booking li::before { content: ''; width: 6px; height: 6px; background: var(--teal); border-radius: 50%; flex-shrink: 0; }
+
+  .divider { border: none; border-top: 1.5px solid var(--gray-100); margin: 24px 0; }
+
+  /* Day navigator */
+  .day-nav { display: flex; align-items: center; gap: 10px; margin-bottom: 24px; }
+  .day-nav-btn {
+    width: 36px; height: 36px; border-radius: 8px; flex-shrink: 0;
+    border: 1.5px solid var(--gray-300); background: var(--white);
+    cursor: pointer; display: flex; align-items: center; justify-content: center;
+    color: var(--gray-500); transition: all 0.15s;
+  }
+  .day-nav-btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+  .day-nav-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  .day-strip { display: flex; gap: 8px; flex: 1; overflow: hidden; }
+
+  .day-chip {
+    flex-shrink: 0; width: calc((100% - 32px) / 5);
+    padding: 10px 6px; border-radius: 12px;
+    border: 1.5px solid var(--gray-100); background: var(--white);
+    cursor: pointer; transition: all 0.15s; text-align: center;
+  }
+  .day-chip:hover { border-color: var(--teal); }
+  .day-chip.active { background: var(--teal); border-color: var(--teal); }
+  .day-chip-name { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.07em; color: var(--gray-500); }
+  .day-chip.active .day-chip-name { color: rgba(255,255,255,0.75); }
+  .day-chip-num { font-size: 17px; font-weight: 700; color: var(--navy); margin: 3px 0 2px; line-height: 1; }
+  .day-chip.active .day-chip-num { color: var(--white); }
+  .day-chip-avail { font-size: 10px; font-weight: 500; color: var(--teal); }
+  .day-chip.active .day-chip-avail { color: rgba(255,255,255,0.85); }
+  /* Fully-booked chip style — still clickable, just shows "Full" */
+  .day-chip.full-day .day-chip-avail { color: var(--orange); }
+  .day-chip.full-day.active .day-chip-avail { color: rgba(255,255,255,0.85); }
+
+  /* Slots section title — original */
+  .slots-section-title {
+    font-size: 16px; font-weight: 600; margin-bottom: 18px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .slots-section-title span { font-size: 13px; color: var(--gray-500); font-weight: 400; }
+
+  /* Period sub-label */
+  .period-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--gray-500); margin-bottom: 10px; margin-top: 20px; }
+  .period-label:first-of-type { margin-top: 0; }
+
+  /* Slots grid — original */
+  .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 4px; }
+  @media (max-width: 500px) { .slots-grid { grid-template-columns: repeat(2, 1fr); } }
+
+  .slot-item {
+    background: var(--white); border: 1.5px solid var(--gray-100);
+    border-radius: var(--radius-sm); padding: 14px 12px;
+    cursor: pointer; transition: all 0.18s ease;
+  }
+  .slot-item:hover { border-color: var(--teal); box-shadow: var(--shadow-sm); }
+  .slot-item.selected { border-color: var(--teal); background: var(--teal-light); box-shadow: 0 0 0 3px rgba(42,157,143,0.15); }
+
+  /* Booked slot — greyed, no hover, no click */
+  .slot-item.booked {
+    background: var(--gray-100); border-color: var(--gray-100);
+    cursor: not-allowed; pointer-events: none;
+  }
+  .slot-date { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 4px; }
+  .slot-item.booked .slot-date { color: var(--gray-300); }
+  .slot-time { font-size: 13px; color: var(--teal); font-weight: 500; }
+  .slot-item.booked .slot-time { color: var(--gray-300); text-decoration: line-through; }
+  .slot-booked-tag { font-size: 10px; font-weight: 600; color: var(--gray-300); text-transform: uppercase; letter-spacing: 0.04em; margin-top: 3px; }
+
+  /* WhatsApp banner — appears ONLY when every slot on this date is booked */
+  @keyframes fadeSlide { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .wa-banner {
+    background: var(--orange-light); border: 1.5px solid #fdddd5;
+    border-radius: var(--radius-sm); padding: 20px 22px; margin-bottom: 20px;
+    animation: fadeSlide 0.35s ease; display: none;
+  }
+  .wa-banner.show { display: block; }
+  .wa-banner-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+  .wa-banner-header h4 { font-size: 15px; font-weight: 700; color: var(--orange); }
+  .wa-banner p { font-size: 13px; color: var(--gray-700); line-height: 1.6; margin-bottom: 16px; }
+  .wa-btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    background: #25d366; color: white; font-size: 14px; font-weight: 600;
+    padding: 13px 22px; border-radius: var(--radius-sm);
+    text-decoration: none; width: 100%;
+    transition: all 0.2s ease; font-family: 'DM Sans', sans-serif;
+  }
+  .wa-btn:hover { background: #1db954; box-shadow: 0 4px 18px rgba(37,211,102,0.35); transform: translateY(-1px); }
+
+  /* Selected bar — original */
+  .selected-appointment-bar {
+    background: var(--teal-light); border: 1.5px solid #b2ddd9;
+    border-radius: var(--radius-sm); padding: 16px 20px;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px; animation: fadeSlide 0.3s ease;
+  }
+  .sel-apt-info h4 { font-size: 14px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .sel-apt-info p { font-size: 13px; color: var(--teal); }
+  .sel-apt-dismiss { background: none; border: none; cursor: pointer; color: var(--gray-500); padding: 4px; border-radius: 50%; transition: background 0.15s; }
+  .sel-apt-dismiss:hover { background: rgba(0,0,0,0.05); }
+
+  /* Continue button — original */
+  .continue-btn {
+    display: flex; align-items: center; gap: 8px; justify-content: center;
+    background: var(--teal); color: white; font-size: 15px; font-weight: 600;
+    padding: 14px 32px; border-radius: var(--radius-sm);
+    cursor: pointer; border: none; width: 100%;
+    transition: all 0.2s ease; text-decoration: none;
+  }
+  .continue-btn:hover { background: var(--teal-dark); box-shadow: 0 4px 20px rgba(42,157,143,0.35); transform: translateY(-1px); }
+  .continue-btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; transform: none; box-shadow: none; }
+</style>
+</head>
+<body>
+
+<header class="portal-header">
+  <div class="logo-mark">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+  </div>
+  <div>
+    <h1>Bhupendra Goud</h1>
+    <span>Appointment Portal</span>
+  </div>
+</header>
+
+<div class="page-wrapper">
+  <a class="back-link" href="appointment.html">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 5l7 7-7 7"/></svg>
+    Back to departments
+  </a>
+
+  <h1 class="page-title">Weight Loss Consultation</h1>
+  <p class="page-subtitle">Select an appointment time.</p>
+
+  <div class="provider-select-card">
+    <div class="provider-select-left">
+      <div class="provider-avatar-sm">🩺</div>
+      <div>
+        <h3>Nutritionist Bhupendra Goud</h3>
+        <p>Weight Loss &amp; Metabolic Health</p>
+        <p class="slots" id="totalAvailLabel">Loading…</p>
+      </div>
+    </div>
+    <div class="selected-badge">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 6L9 17l-5-5"/></svg>
+      Selected
+    </div>
+  </div>
+
+  <div class="after-booking">
+    <h4>After booking:</h4>
+    <ul>
+      <li>Fill out a short health questionnaire</li>
+      <li>Submit your request for approval</li>
+    </ul>
+  </div>
+
+  <hr class="divider">
+
+  <!-- Day navigator -->
+  <div class="day-nav">
+    <button class="day-nav-btn" id="prevBtn" disabled>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 18l-6-6 6-6"/></svg>
+    </button>
+    <div class="day-strip" id="dayStrip"></div>
+    <button class="day-nav-btn" id="nextBtn">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18l6-6-6-6"/></svg>
+    </button>
+  </div>
+
+  <!-- Section title -->
+  <div class="slots-section-title">
+    Available times for Nutritionist Bhupendra Goud
+    <span id="slotCountLabel">— select a day above</span>
+  </div>
+
+  <!-- WhatsApp banner — only shows when date is 100% booked -->
+  <div class="wa-banner" id="waBanner">
+    <div class="wa-banner-header">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/>
+      </svg>
+      <h4>All slots are fully booked for this date</h4>
+    </div>
+    <p>Every slot on this day is already taken. You can pick a different date above, or message Bhupendra Goud's clinic directly on WhatsApp to request an appointment outside of regular hours.</p>
+    <a class="wa-btn" id="waLink" href="#" target="_blank">
+      <svg width="20" height="20" viewBox="0 0 32 32" fill="white">
+        <path d="M16 0C7.163 0 0 7.163 0 16c0 2.822.738 5.469 2.031 7.769L0 32l8.469-2.219A15.93 15.93 0 0016 32c8.837 0 16-7.163 16-16S24.837 0 16 0zm0 29.333a13.27 13.27 0 01-6.771-1.854l-.486-.289-5.027 1.318 1.342-4.9-.317-.503A13.267 13.267 0 012.667 16C2.667 8.636 8.636 2.667 16 2.667S29.333 8.636 29.333 16 23.364 29.333 16 29.333zm7.258-9.958c-.397-.199-2.348-1.158-2.712-1.29-.363-.132-.628-.198-.892.199-.264.397-1.023 1.29-1.254 1.554-.231.265-.462.298-.859.1-.397-.2-1.676-.618-3.193-1.97-1.18-1.053-1.977-2.352-2.208-2.749-.231-.397-.025-.611.173-.809.178-.177.397-.463.595-.694.199-.232.265-.397.397-.661.133-.265.066-.497-.033-.695-.1-.199-.893-2.152-1.223-2.947-.322-.773-.65-.668-.892-.68l-.761-.013c-.264 0-.694.099-1.058.497-.363.397-1.388 1.357-1.388 3.31s1.421 3.838 1.62 4.103c.198.264 2.796 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+      </svg>
+      Contact for Appointment Slot via WhatsApp
+    </a>
+  </div>
+
+  <!-- Slots rendered here -->
+  <div id="slotsContainer"></div>
+
+  <!-- Selected bar — original -->
+  <div class="selected-appointment-bar" id="selectedBar" style="display:none">
+    <div class="sel-apt-info">
+      <h4>Selected appointment</h4>
+      <p id="selectedText"></p>
+      <p style="font-size:12px;color:var(--gray-500);margin-top:2px">Nutritionist Bhupendra Goud</p>
+    </div>
+    <button class="sel-apt-dismiss" id="dismissBtn">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+
+  <!-- Continue button — original -->
+  <a id="continueBtn" href="page3-questionnaire.html" class="continue-btn disabled">
+    Continue to questionnaire
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+  </a>
+</div>
+
+<script type="module">
+import { initializeApp }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, onSnapshot, query, where }
+  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+// ─────────────────────────────────────────
+// ★ CONFIG
+// ─────────────────────────────────────────
+const WHATSAPP_NUMBER  = '919876543210';
+const CLINIC_OPEN_DAYS = [1,2,3,4,5,6];
+const SLOT_START_HOUR  = 9;
+const SLOT_START_MIN   = 15;   // 9:15 AM start
+const SLOT_END_HOUR    = 17;
+const SLOT_END_MIN     = 30;   // 5:30 PM end
+const SLOT_DURATION    = 15;   // 15-minute slots
+const DAYS_AHEAD       = 14;
+const CHIPS_PER_PAGE   = 5;
+// Only April 12 is open for booking
+const OPEN_DATE        = '2026-04-12';
+
+const firebaseConfig = {
+  apiKey:            "AIzaSyCchLfleDnJVGHopbQnYN4RoLFLpf_cTL0",
+  authDomain:        "wellpath-clinic.firebaseapp.com",
+  projectId:         "wellpath-clinic",
+  storageBucket:     "wellpath-clinic.firebasestorage.app",
+  messagingSenderId: "1012769542606",
+  appId:             "1:1012769542606:web:a8ceb76fc16bf460cadb9f"
+};
+
+// ─────────────────────────────────────────
+// Helpers
+// ─────────────────────────────────────────
+function pad(n) { return String(n).padStart(2, '0'); }
+function today() { const d = new Date(); d.setHours(0,0,0,0); return d; }
+function dateKey(d) { return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; }
+
+// BOOKED map — rebuilt live from Firestore
+let BOOKED = {};
+
+// All 15-min slots from 9:15 to 17:30
+function allSlots() {
+  const out = [];
+  let h = SLOT_START_HOUR, m = SLOT_START_MIN;
+  const endTotal = SLOT_END_HOUR * 60 + SLOT_END_MIN;
+  while (h * 60 + m < endTotal) {
+    out.push(`${pad(h)}:${pad(m)}`);
+    m += SLOT_DURATION;
+    if (m >= 60) { h += 1; m -= 60; }
+  }
+  return out;
+}
+
+// How many slots are free on a given date
+function freeCount(d) {
+  const booked = new Set(BOOKED[dateKey(d)] || []);
+  return allSlots().filter(k => !booked.has(k)).length;
+}
+
+function isFullyBooked(d) { return freeCount(d) === 0; }
+
+// Format "HH:MM" → "9:00 AM"
+function fmt(hhmm) {
+  let [h, m] = hhmm.split(':').map(Number);
+  const s = h >= 12 ? 'PM' : 'AM';
+  if (h > 12) h -= 12; if (h === 0) h = 12;
+  return `${h}:${pad(m)} ${s}`;
+}
+
+// Format slot range "HH:MM" → "9:15 AM – 9:30 AM"
+function fmtRange(hhmm) {
+  let [h, m] = hhmm.split(':').map(Number);
+  let em = m + SLOT_DURATION, eh = h;
+  if (em >= 60) { eh += 1; em -= 60; }
+  return `${fmt(hhmm)} – ${fmt(`${pad(eh)}:${pad(em)}`)}`;
+}
+
+function fullDate(d) {
+  return d.toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+}
+function shortDate(d) {
+  return d.toLocaleDateString('en-IN', { weekday:'short', month:'short', day:'numeric' });
+}
+
+// ─────────────────────────────────────────
+// Build available days list
+// ─────────────────────────────────────────
+// Only April 12, 2026 is available for booking
+const availDays = [];
+const april12 = new Date('2026-04-12T00:00:00');
+availDays.push(april12);
+
+// ─────────────────────────────────────────
+// State
+// ─────────────────────────────────────────
+let chipOffset   = 0;
+let activeDayIdx = 0;
+let selectedSlot = null; // "HH:MM"
+
+// ─────────────────────────────────────────
+// Day strip
+// ─────────────────────────────────────────
+function renderStrip() {
+  const strip = document.getElementById('dayStrip');
+  strip.innerHTML = '';
+
+  const visible = availDays.slice(chipOffset, chipOffset + CHIPS_PER_PAGE);
+
+  visible.forEach((d, vi) => {
+    const realIdx = chipOffset + vi;
+    const free    = freeCount(d);
+    const full    = free === 0;
+    const active  = realIdx === activeDayIdx;
+
+    const chip = document.createElement('div');
+    chip.className = 'day-chip' + (active ? ' active' : '') + (full ? ' full-day' : '');
+    chip.title = full ? 'Fully booked — click to see options' : `${free} slots available`;
+    chip.innerHTML = `
+      <div class="day-chip-name">${d.toLocaleDateString('en-IN', {weekday:'short'})}</div>
+      <div class="day-chip-num">${d.getDate()} ${d.toLocaleDateString('en-IN', {month:'short'})}</div>
+      <div class="day-chip-avail">${full ? '🔴 Full' : free + ' free'}</div>
+    `;
+    chip.onclick = () => setDay(realIdx); // always clickable
+    strip.appendChild(chip);
+  });
+
+  document.getElementById('prevBtn').disabled = chipOffset === 0;
+  document.getElementById('nextBtn').disabled = chipOffset + CHIPS_PER_PAGE >= availDays.length;
+}
+
+function scrollDays(delta) {
+  chipOffset = Math.max(0, Math.min(availDays.length - CHIPS_PER_PAGE, chipOffset + delta));
+  renderStrip();
+}
+
+function setDay(idx) {
+  activeDayIdx = idx;
+  selectedSlot = null;
+  document.getElementById('selectedBar').style.display = 'none';
+  document.getElementById('continueBtn').classList.add('disabled');
+  sessionStorage.removeItem('appointmentDate');
+  sessionStorage.removeItem('appointmentTime');
+  renderStrip();
+  renderSlots();
+}
+
+// ─────────────────────────────────────────
+// Slots render
+// ─────────────────────────────────────────
+function renderSlots() {
+  const day    = availDays[activeDayIdx];
+  const booked = new Set(BOOKED[dateKey(day)] || []);
+  const free   = freeCount(day);
+  const full   = free === 0;
+  const label  = shortDate(day);
+
+  // Count label
+  document.getElementById('slotCountLabel').textContent = full
+    ? '— all slots booked'
+    : `${free} slot${free !== 1 ? 's' : ''} available`;
+
+  // WhatsApp banner
+  const banner = document.getElementById('waBanner');
+  if (full) {
+    const msg = encodeURIComponent(
+      `Hello,\n\nI'd like to book a *Weight Loss Consultation* with Nutritionist Bhupendra Goud on *${fullDate(day)}*.\n\nAll regular time slots are fully booked on this date. Could you please help me schedule an appointment at a convenient time?\n\nThank you.`
+    );
+    document.getElementById('waLink').href = `https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`;
+    banner.classList.add('show');
+  } else {
+    banner.classList.remove('show');
+  }
+
+  // Render slot cards grouped by period
+  const periods = [
+    { label: '☀️  Morning',   from: 9*60+15,  to: 12*60 },
+    { label: '🌤️  Afternoon', from: 12*60,    to: 17*60 },
+    { label: '🌅  Evening',   from: 17*60,    to: 17*60+30 },
+  ];
+
+  const container = document.getElementById('slotsContainer');
+  let html = '';
+
+  periods.forEach(p => {
+    const pSlots = allSlots().filter(k => {
+      const [hh, mm] = k.split(':').map(Number);
+      const total = hh * 60 + mm;
+      return total >= p.from && total < p.to;
+    });
+    if (!pSlots.length) return;
+
+    html += `<div class="period-label">${p.label}</div><div class="slots-grid">`;
+    pSlots.forEach(k => {
+      const isBooked = booked.has(k);
+      const isSel    = !isBooked && selectedSlot === k;
+      html += `
+        <div class="slot-item${isBooked ? ' booked' : ''}${isSel ? ' selected' : ''}"
+          ${isBooked ? '' : `data-slot="${k}" data-label="${label}"`}>
+          <div class="slot-date">${label}</div>
+          <div class="slot-time">${fmtRange(k)}</div>
+          ${isBooked ? '<div class="slot-booked-tag">Booked</div>' : ''}
+        </div>`;
+    });
+    html += '</div>';
+  });
+
+  container.innerHTML = html;
+
+  // Delegated click — works even after innerHTML re-render
+  container.querySelectorAll('.slot-item[data-slot]').forEach(el => {
+    el.addEventListener('click', () => pickSlot(el.dataset.slot, el.dataset.label));
+  });
+}
+
+// ─────────────────────────────────────────
+// Slot selection
+// ─────────────────────────────────────────
+function pickSlot(key, label) {
+  selectedSlot = key;
+  renderSlots();
+
+  const day      = availDays[activeDayIdx];
+  const fullDate_ = fullDate(day);
+  const timeStr  = fmt(key);
+
+  document.getElementById('selectedText').textContent = `${fullDate_} at ${timeStr}`;
+  document.getElementById('selectedBar').style.display = 'flex';
+  document.getElementById('continueBtn').classList.remove('disabled');
+
+  sessionStorage.setItem('appointmentDate', fullDate_);
+  sessionStorage.setItem('appointmentTime', timeStr);
+}
+
+function clearSelection() {
+  selectedSlot = null;
+  document.getElementById('selectedBar').style.display = 'none';
+  document.getElementById('continueBtn').classList.add('disabled');
+  sessionStorage.removeItem('appointmentDate');
+  sessionStorage.removeItem('appointmentTime');
+  renderSlots();
+}
+
+// ─────────────────────────────────────────
+// Total count for provider card
+// ─────────────────────────────────────────
+function updateTotalLabel() {
+  const total = availDays.reduce((sum, d) => sum + freeCount(d), 0);
+  document.getElementById('totalAvailLabel').textContent =
+    `${total} available appointment slot${total !== 1 ? 's' : ''}`;
+}
+
+// ─────────────────────────────────────────
+// Init — Firebase real-time listener
+// ─────────────────────────────────────────
+
+// Show spinner while connecting
+document.getElementById('slotsContainer').innerHTML = `
+  <div style="text-align:center;padding:40px 0;color:var(--gray-500);">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2a9d8f" stroke-width="2"
+      style="animation:fbspin 1s linear infinite;display:block;margin:0 auto 12px">
+      <path d="M21 12a9 9 0 11-6.219-8.56"/>
+    </svg>
+    <style>@keyframes fbspin{to{transform:rotate(360deg)}}</style>
+    <p style="font-size:14px">Loading real-time availability…</p>
+  </div>`;
+document.getElementById('totalAvailLabel').textContent = 'Connecting…';
+
+// Attach button handlers via JS (required for type="module")
+document.getElementById('prevBtn').addEventListener('click', () => scrollDays(-1));
+document.getElementById('nextBtn').addEventListener('click', () => scrollDays(1));
+document.getElementById('dismissBtn').addEventListener('click', () => clearSelection());
+
+// Firebase
+const app = initializeApp(firebaseConfig);
+const db  = getFirestore(app);
+
+let firstLoad = true;
+
+onSnapshot(
+  query(collection(db, 'appointments'), where('status', '!=', 'rejected')),
+  (snapshot) => {
+    // Rebuild BOOKED from live Firestore data
+    BOOKED = {};
+    snapshot.forEach(doc => {
+      const data = doc.data();
+      if (!data.date || !data.time) return;
+
+      // date stored as "Monday, March 30, 2026" → parse to Date → YYYY-MM-DD
+      const parsedDate = new Date(data.date);
+      if (isNaN(parsedDate.getTime())) return;
+      const dk = dateKey(parsedDate);
+
+      // time stored as "2:30 PM" → "14:30"
+      const mt = data.time.match(/(\d+):(\d+)\s*(AM|PM)/i);
+      if (!mt) return;
+      let h = parseInt(mt[1]);
+      const mins = mt[2];
+      if (mt[3].toUpperCase() === 'PM' && h !== 12) h += 12;
+      if (mt[3].toUpperCase() === 'AM' && h === 12) h = 0;
+      const timeKey = `${pad(h)}:${mins}`;
+
+      if (!BOOKED[dk]) BOOKED[dk] = [];
+      BOOKED[dk].push(timeKey);
+    });
+
+    console.log('[WellPath] Firestore live update:', BOOKED);
+    updateTotalLabel();
+
+    if (firstLoad) {
+      firstLoad = false;
+      renderStrip();
+      setDay(0);
+    } else {
+      renderStrip();
+      renderSlots();
+    }
+  },
+  (err) => {
+    console.error('[WellPath] Firestore error:', err);
+    document.getElementById('slotsContainer').innerHTML = `
+      <div style="background:#fff4f0;border:1.5px solid #fdddd5;border-radius:10px;
+        padding:16px 20px;font-size:13px;color:#3d5560;">
+        <strong style="color:#e76f51;">⚠ Could not connect to database.</strong><br>
+        Please check your internet connection and refresh.
+      </div>`;
+    document.getElementById('totalAvailLabel').textContent = 'Connection error';
+  }
+);
+</script>
+</body>
+</html>
