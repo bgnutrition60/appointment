@@ -30,7 +30,6 @@
   .page-title { font-family: 'DM Serif Display', serif; font-size: 26px; text-align: center; margin-bottom: 6px; }
   .page-subtitle { font-size: 14px; color: var(--gray-500); text-align: center; margin-bottom: 28px; }
 
-  /* Appointment Summary Card */
   .appt-summary {
     background: var(--white); border: 1.5px solid var(--gray-100);
     border-radius: var(--radius); padding: 24px 22px; margin-bottom: 16px;
@@ -45,17 +44,16 @@
     padding: 4px 12px; border-radius: 20px; font-weight: 500;
   }
 
-  /* Status cards */
   .status-card {
     border-radius: var(--radius-sm); padding: 16px 18px; margin-bottom: 12px;
     display: flex; align-items: flex-start; gap: 12px;
   }
-  .status-card.green { background: #f0faf0; border: 1.5px solid #c8e6c9; }
+  .status-card.green  { background: #f0faf0; border: 1.5px solid #c8e6c9; }
   .status-card.purple { background: #f3f0fb; border: 1.5px solid #d8ccf5; }
   .status-card.orange { background: var(--orange-light); border: 1.5px solid #fdddd5; }
   .status-icon { width: 22px; height: 22px; flex-shrink: 0; margin-top: 1px; }
   .status-card h4 { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
-  .status-card.green h4 { color: #2e7d32; }
+  .status-card.green h4  { color: #2e7d32; }
   .status-card.purple h4 { color: #5e35b1; }
   .status-card.orange h4 { color: var(--orange); }
   .status-card p { font-size: 13px; color: var(--gray-700); line-height: 1.5; }
@@ -64,9 +62,8 @@
   .status-card li { font-size: 13px; color: var(--gray-700); display: flex; align-items: center; gap: 8px; }
   .step-dot { width: 5px; height: 5px; background: var(--orange); border-radius: 50%; flex-shrink: 0; }
 
-  /* Form */
   .form-section h4 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
-  .form-section p { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
+  .form-section p  { font-size: 13px; color: var(--gray-500); margin-bottom: 20px; }
   .form-group { margin-bottom: 16px; }
   .form-label { font-size: 13px; font-weight: 500; color: var(--navy); margin-bottom: 6px; display: block; }
   .required { color: var(--orange); }
@@ -96,24 +93,154 @@
     flex: 1; padding: 13px; border: 1.5px solid var(--gray-300); background: var(--white);
     border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; color: var(--gray-700);
     cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif; text-decoration: none;
-    text-align: center;
+    text-align: center; display: flex; align-items: center; justify-content: center;
   }
   .btn-cancel:hover { border-color: var(--navy); color: var(--navy); }
   .btn-submit {
     flex: 2; padding: 13px; background: var(--teal); border: none;
     border-radius: var(--radius-sm); font-size: 14px; font-weight: 600; color: white;
     cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
   }
-  .btn-submit:hover { background: var(--teal-dark); box-shadow: 0 4px 16px rgba(42,157,143,0.3); }
+  .btn-submit:hover:not(:disabled) { background: var(--teal-dark); box-shadow: 0 4px 16px rgba(42,157,143,0.3); }
+  .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; }
 
   .error-msg { color: #c62828; font-size: 12px; margin-top: 5px; display: none; }
   .form-input.error, .form-select.error { border-color: #c62828; }
+
+  /* ─── Sending spinner inside main button ─── */
+  .spin-sm {
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,0.35);
+    border-top-color: white; border-radius: 50%;
+    animation: spinIt 0.7s linear infinite; display: none;
+  }
+  @keyframes spinIt { to { transform: rotate(360deg); } }
+
+  /* ════════════════════════════════════════
+     OTP MODAL OVERLAY
+  ════════════════════════════════════════ */
+  .otp-overlay {
+    position: fixed; inset: 0;
+    background: rgba(26,39,68,0.55);
+    backdrop-filter: blur(5px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; padding: 20px;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+  .otp-overlay.visible { opacity: 1; pointer-events: all; }
+
+  .otp-modal {
+    background: var(--white); border-radius: 22px;
+    padding: 36px 28px; max-width: 390px; width: 100%;
+    box-shadow: 0 24px 64px rgba(26,39,68,0.22);
+    transform: translateY(24px) scale(0.97);
+    transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), opacity 0.3s ease;
+    opacity: 0;
+  }
+  .otp-overlay.visible .otp-modal { transform: translateY(0) scale(1); opacity: 1; }
+
+  .otp-shield {
+    width: 68px; height: 68px;
+    background: linear-gradient(135deg, var(--teal), var(--teal-dark));
+    border-radius: 20px; display: flex; align-items: center; justify-content: center;
+    margin: 0 auto 22px;
+    box-shadow: 0 10px 28px rgba(42,157,143,0.32);
+  }
+
+  .otp-modal h2 {
+    font-family: 'DM Serif Display', serif; font-size: 23px;
+    text-align: center; margin-bottom: 8px; color: var(--navy);
+  }
+  .otp-desc {
+    font-size: 13.5px; color: var(--gray-500); text-align: center;
+    line-height: 1.65; margin-bottom: 28px;
+  }
+  .otp-desc strong { color: var(--navy); }
+
+  /* 6 OTP digit boxes */
+  .otp-boxes { display: flex; gap: 9px; justify-content: center; margin-bottom: 6px; }
+  .otp-box {
+    width: 46px; height: 56px;
+    border: 2px solid var(--gray-300); border-radius: 13px;
+    font-size: 22px; font-weight: 700; text-align: center;
+    color: var(--navy); font-family: 'DM Sans', sans-serif;
+    outline: none; background: var(--gray-50); caret-color: var(--teal);
+    transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
+  }
+  .otp-box:focus {
+    border-color: var(--teal);
+    box-shadow: 0 0 0 3px rgba(42,157,143,0.15);
+    background: var(--white);
+  }
+  .otp-box.filled  { border-color: var(--teal); background: var(--teal-light); }
+  .otp-box.err-box { border-color: #e53e3e; background: #fff5f5; animation: shk 0.4s ease; }
+
+  @keyframes shk {
+    0%,100% { transform: translateX(0); }
+    20%,60%  { transform: translateX(-5px); }
+    40%,80%  { transform: translateX(5px); }
+  }
+
+  .otp-timer {
+    text-align: center; font-size: 13px; color: var(--gray-500);
+    margin-bottom: 20px; min-height: 22px;
+  }
+  #timerCount { color: var(--teal); font-weight: 600; }
+  #resendBtn {
+    background: none; border: none; cursor: pointer;
+    color: var(--teal); font-weight: 600; font-family: 'DM Sans', sans-serif;
+    font-size: 13px; text-decoration: underline; display: none;
+  }
+  #resendBtn:disabled { color: var(--gray-300); cursor: not-allowed; text-decoration: none; }
+
+  .otp-err-msg {
+    text-align: center; font-size: 13px; color: #b91c1c;
+    background: #fff5f5; border: 1.5px solid #fca5a5;
+    border-radius: 9px; padding: 10px 14px; margin-bottom: 16px; display: none;
+  }
+  .otp-ok-msg {
+    text-align: center; font-size: 13px; color: #15803d;
+    background: #f0fdf4; border: 1.5px solid #bbf7d0;
+    border-radius: 9px; padding: 10px 14px; margin-bottom: 16px; display: none;
+  }
+
+  .btn-verify {
+    width: 100%; padding: 14px; background: var(--teal); border: none;
+    border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; color: white;
+    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+    display: flex; align-items: center; justify-content: center; gap: 8px;
+    margin-bottom: 12px;
+  }
+  .btn-verify:hover:not(:disabled) { background: var(--teal-dark); box-shadow: 0 4px 16px rgba(42,157,143,0.3); }
+  .btn-verify:disabled { opacity: 0.55; cursor: not-allowed; }
+
+  .btn-back {
+    width: 100%; padding: 12px; background: var(--white);
+    border: 1.5px solid var(--gray-300); border-radius: var(--radius-sm);
+    font-size: 14px; font-weight: 500; color: var(--gray-700);
+    cursor: pointer; transition: all 0.2s; font-family: 'DM Sans', sans-serif;
+  }
+  .btn-back:hover { border-color: var(--navy); color: var(--navy); }
+
+  /* spinner inside buttons */
+  .spin-md {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(255,255,255,0.35);
+    border-top-color: white; border-radius: 50%;
+    animation: spinIt 0.7s linear infinite; display: none;
+  }
 </style>
 </head>
 <body>
+
+<!-- ─── Header ─── -->
 <header class="portal-header">
   <div class="logo-mark">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+      <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+    </svg>
   </div>
   <div>
     <h1>Bhupendra Goud</h1>
@@ -125,18 +252,20 @@
   <h1 class="page-title">Request Appointment</h1>
   <p class="page-subtitle">Send your appointment request to the care provider</p>
 
-  <!-- Appointment Summary -->
+  <!-- Appointment Summary Card -->
   <div class="appt-summary">
     <h3>Nutritionist Bhupendra Goud</h3>
     <p class="service-name">Weight Loss Consultation</p>
     <p class="appt-time" id="apptTimeDisplay">Today at 3:30 PM</p>
     <span class="appt-status">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+      </svg>
       Awaiting provider approval
     </span>
   </div>
 
-  <!-- Questionnaire Completed -->
+  <!-- Questionnaire done -->
   <div class="status-card green">
     <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#2e7d32" stroke-width="2">
       <circle cx="12" cy="12" r="10" fill="#c8e6c9" stroke="none"/>
@@ -148,24 +277,22 @@
     </div>
   </div>
 
-  <!-- Selected Time Slot -->
+  <!-- Time slot -->
   <div class="status-card purple">
     <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="#5e35b1" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M12 8v4l3 3"/>
+      <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
     </svg>
     <div>
       <h4>Selected Time Slot</h4>
       <p class="time-detail" id="slotDetail">Tuesday, March 24, 2026 at 3:30 PM</p>
-      <p style="font-size:12px;color:var(--gray-500);margin-top:3px">Provider: Dr. Meera Kapoor</p>
+      <p style="font-size:12px;color:var(--gray-500);margin-top:3px">Provider: Nutritionist Bhupendra Goud</p>
     </div>
   </div>
 
   <!-- How it works -->
   <div class="status-card orange">
     <svg class="status-icon" viewBox="0 0 24 24" fill="none" stroke="var(--orange)" stroke-width="2">
-      <circle cx="12" cy="12" r="10"/>
-      <path d="M12 16v-4M12 8h.01"/>
+      <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
     </svg>
     <div>
       <h4>How it works:</h4>
@@ -179,10 +306,10 @@
 
   <hr class="form-divider">
 
-  <!-- Your Details Form -->
+  <!-- Patient Details Form -->
   <div class="form-section">
     <h4>Your details</h4>
-    <p>Please provide your name, age and gender before continuing.</p>
+    <p>Please provide your information. We'll verify your phone number with an OTP before submitting.</p>
 
     <div class="form-group">
       <label class="form-label">Full name <span class="required">*</span></label>
@@ -193,7 +320,7 @@
     <div class="form-group">
       <label class="form-label">Age <span class="required">*</span></label>
       <input type="number" class="form-input" id="age" placeholder="Enter your age" min="1" max="120">
-      <div class="error-msg" id="ageError">Please enter a valid age</div>
+      <div class="error-msg" id="ageError">Please enter a valid age (1–120)</div>
     </div>
 
     <div class="form-group">
@@ -210,8 +337,8 @@
 
     <div class="form-group">
       <label class="form-label">Phone number <span class="required">*</span></label>
-      <input type="tel" class="form-input" id="phone" placeholder="e.g. +91 98765 43210">
-      <div class="error-msg" id="phoneError">Please enter a valid 10-digit phone number</div>
+      <input type="tel" class="form-input" id="phone" placeholder="10-digit Indian mobile (e.g. 9876543210)">
+      <div class="error-msg" id="phoneError">Please enter a valid 10-digit Indian mobile number (starts with 6–9)</div>
     </div>
 
     <div class="form-group">
@@ -223,19 +350,100 @@
 
   <div class="action-row">
     <a class="btn-cancel" href="index.html">Cancel</a>
-    <button class="btn-submit" onclick="submitRequest()">Continue</button>
+    <button class="btn-submit" id="continueBtn" onclick="handleContinue()">
+      <span id="continueTxt">Continue &amp; Verify</span>
+      <div class="spin-sm" id="sendSpinner"></div>
+      <svg id="continueIcon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M5 12h14M12 5l7 7-7 7"/>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════════
+     OTP VERIFICATION MODAL
+════════════════════════════════════════════ -->
+<div class="otp-overlay" id="otpOverlay">
+  <div class="otp-modal">
+
+    <!-- Shield icon -->
+    <div class="otp-shield">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+        <path d="M9 12l2 2 4-4" stroke-width="2.3"/>
+      </svg>
+    </div>
+
+    <h2>Verify Your Phone</h2>
+    <p class="otp-desc">
+      We sent a <strong>6-digit OTP</strong> to<br>
+      <strong id="maskedPhone">+91 XXXXXX1234</strong>
+    </p>
+
+    <!-- 6 Digit Boxes -->
+    <div class="otp-boxes">
+      <input class="otp-box" id="d0" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+      <input class="otp-box" id="d1" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+      <input class="otp-box" id="d2" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+      <input class="otp-box" id="d3" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+      <input class="otp-box" id="d4" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+      <input class="otp-box" id="d5" maxlength="1" type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off">
+    </div>
+
+    <!-- Timer -->
+    <div class="otp-timer">
+      <span id="timerDisplay">Resend OTP in <span id="timerCount">30</span>s</span>
+      <button id="resendBtn" onclick="resendOTP()" disabled>Resend OTP</button>
+    </div>
+
+    <!-- Messages -->
+    <div class="otp-err-msg" id="otpErrMsg"></div>
+    <div class="otp-ok-msg"  id="otpOkMsg"></div>
+
+    <!-- Verify button -->
+    <button class="btn-verify" id="verifyBtn" onclick="verifyOTP()">
+      <span id="verifyTxt">Verify &amp; Submit</span>
+      <div class="spin-md" id="verifySpinner"></div>
+    </button>
+
+    <!-- Go back -->
+    <button class="btn-back" onclick="closeModal()">← Go back and edit details</button>
+
   </div>
 </div>
 
 <script>
-// Load appointment info from session
-const date = sessionStorage.getItem('appointmentDate') || 'Tuesday, March 24, 2026';
-const time = sessionStorage.getItem('appointmentTime') || '3:30 PM';
-document.getElementById('apptTimeDisplay').textContent = `${date} at ${time}`;
-document.getElementById('slotDetail').textContent = `${date} at ${time}`;
+// ╔══════════════════════════════════════════════════════════╗
+// ║  ⚠️  REPLACE WITH YOUR REAL FAST2SMS API KEY            ║
+// ║  Dashboard → https://www.fast2sms.com → Dev API         ║
+// ╚══════════════════════════════════════════════════════════╝
+const FAST2SMS_KEY = 'CE9BLTlmYRnfKZ2AjM1xkJbi6zIwr3Fph5vV8gdsWcGQUD0HXtvCIsE8xNBV59oi7eGgcwL1U60yW2RD';
 
-function submitRequest() {
-  let valid = true;
+// ── State ──────────────────────────────────────────────────
+let currentOTP   = '';
+let attempts     = 0;
+let countdown    = null;
+const MAX_TRIES  = 5;
+
+// ── Populate appointment info from sessionStorage ──────────
+(function () {
+  const d = sessionStorage.getItem('appointmentDate') || 'Tuesday, March 24, 2026';
+  const t = sessionStorage.getItem('appointmentTime') || '3:30 PM';
+  document.getElementById('apptTimeDisplay').textContent = d + ' at ' + t;
+  document.getElementById('slotDetail').textContent      = d + ' at ' + t;
+})();
+
+// ══════════════════════════════════════════════════════════
+//  FORM VALIDATION
+// ══════════════════════════════════════════════════════════
+function validateForm() {
+  let ok = true;
+  const els = ['fullName','age','gender','phone','email'];
+  els.forEach(id => {
+    document.getElementById(id).classList.remove('error');
+  });
+  document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
 
   const name   = document.getElementById('fullName');
   const age    = document.getElementById('age');
@@ -243,47 +451,309 @@ function submitRequest() {
   const phone  = document.getElementById('phone');
   const email  = document.getElementById('email');
 
-  [name, age, gender, phone, email].forEach(el => el.classList.remove('error'));
-  document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
-
   if (!name.value.trim()) {
     name.classList.add('error');
     document.getElementById('nameError').style.display = 'block';
-    valid = false;
+    ok = false;
   }
-  if (!age.value || age.value < 1 || age.value > 120) {
+  if (!age.value || +age.value < 1 || +age.value > 120) {
     age.classList.add('error');
     document.getElementById('ageError').style.display = 'block';
-    valid = false;
+    ok = false;
   }
   if (!gender.value) {
     gender.classList.add('error');
     document.getElementById('genderError').style.display = 'block';
-    valid = false;
+    ok = false;
   }
-  // Phone validation — must be 10 digits (ignoring spaces, +, -)
-  const phoneClean = phone.value.replace(/[\s\-\+]/g, '');
-  if (!phoneClean || !/^\d{10,13}$/.test(phoneClean)) {
+  // Indian mobile: starts 6–9, exactly 10 digits
+  const ph = phone.value.replace(/[\s\-\+]/g, '');
+  if (!/^[6-9]\d{9}$/.test(ph)) {
     phone.classList.add('error');
     document.getElementById('phoneError').style.display = 'block';
-    valid = false;
+    ok = false;
   }
-  // Email validation
-  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!email.value.trim() || !emailRegex.test(email.value.trim())) {
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.value.trim())) {
     email.classList.add('error');
     document.getElementById('emailError').style.display = 'block';
-    valid = false;
+    ok = false;
+  }
+  return ok;
+}
+
+// ══════════════════════════════════════════════════════════
+//  MAIN BUTTON: validate → send OTP → open modal
+// ══════════════════════════════════════════════════════════
+async function handleContinue() {
+  if (!validateForm()) return;
+
+  // Save to session immediately so page6 can read it
+  sessionStorage.setItem('patientName',   document.getElementById('fullName').value.trim());
+  sessionStorage.setItem('patientAge',    document.getElementById('age').value);
+  sessionStorage.setItem('patientGender', document.getElementById('gender').value);
+  sessionStorage.setItem('patientPhone',  document.getElementById('phone').value.trim());
+  sessionStorage.setItem('patientEmail',  document.getElementById('email').value.trim());
+
+  // UI: loading state
+  const btn    = document.getElementById('continueBtn');
+  const txt    = document.getElementById('continueTxt');
+  const spin   = document.getElementById('sendSpinner');
+  const icon   = document.getElementById('continueIcon');
+  btn.disabled = true;
+  txt.textContent     = 'Sending OTP…';
+  spin.style.display  = 'block';
+  icon.style.display  = 'none';
+
+  const phone = document.getElementById('phone').value.replace(/[\s\-\+]/g, '');
+
+  // Generate OTP
+  currentOTP = String(Math.floor(100000 + Math.random() * 900000));
+
+  // ── DEV NOTE: Remove this line before going live ──
+  console.log('%c🔐 OTP (dev only): ' + currentOTP, 'color:#2a9d8f;font-size:16px;font-weight:bold');
+
+  const sent = await sendSMS(phone, currentOTP);
+
+  // Restore button
+  btn.disabled        = false;
+  txt.textContent     = 'Continue & Verify';
+  spin.style.display  = 'none';
+  icon.style.display  = 'block';
+
+  // Show modal regardless (fallback for dev/testing)
+  maskPhone(phone);
+  openModal();
+  startTimer();
+
+  if (!sent) {
+    showErr('⚠️ SMS could not be delivered. Your OTP is in the browser console (dev mode).');
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  FAST2SMS — send OTP SMS
+// ══════════════════════════════════════════════════════════
+async function sendSMS(mobile, otp) {
+  try {
+    const res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
+      method : 'POST',
+      headers: {
+        'authorization' : FAST2SMS_KEY,
+        'Content-Type'  : 'application/json'
+      },
+      body: JSON.stringify({
+        route           : 'otp',   // Fast2SMS OTP route (no DLT needed)
+        variables_values: otp,     // 6-digit OTP
+        numbers         : mobile   // 10-digit Indian number
+      })
+    });
+    const data = await res.json();
+    console.log('Fast2SMS:', data);
+    return data.return === true;
+  } catch (err) {
+    console.error('Fast2SMS error:', err);
+    return false;
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  OTP MODAL — open / close
+// ══════════════════════════════════════════════════════════
+function openModal() {
+  attempts = 0;
+  resetBoxes();
+  clearMsgs();
+  document.getElementById('verifyBtn').disabled    = false;
+  document.getElementById('verifyTxt').textContent = 'Verify & Submit';
+  document.getElementById('otpOverlay').classList.add('visible');
+  setTimeout(() => document.getElementById('d0').focus(), 380);
+}
+
+function closeModal() {
+  document.getElementById('otpOverlay').classList.remove('visible');
+  stopTimer();
+  resetBoxes();
+  clearMsgs();
+}
+
+function maskPhone(ph) {
+  document.getElementById('maskedPhone').textContent =
+    '+91 ' + ph.slice(0, 2) + 'XXXXXX' + ph.slice(-2);
+}
+
+// Close on backdrop click
+document.getElementById('otpOverlay').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+// ══════════════════════════════════════════════════════════
+//  OTP BOX INTERACTIONS
+// ══════════════════════════════════════════════════════════
+['d0','d1','d2','d3','d4','d5'].forEach((id, i) => {
+  const box = document.getElementById(id);
+
+  box.addEventListener('input', () => {
+    box.value = box.value.replace(/\D/g,'').slice(-1);
+    box.classList.toggle('filled', !!box.value);
+    if (box.value && i < 5) document.getElementById('d'+(i+1)).focus();
+    if (getOTP().length === 6) setTimeout(verifyOTP, 220);
+  });
+
+  box.addEventListener('keydown', e => {
+    if (e.key === 'Backspace' && !box.value && i > 0) document.getElementById('d'+(i-1)).focus();
+    if (e.key === 'ArrowLeft'  && i > 0) document.getElementById('d'+(i-1)).focus();
+    if (e.key === 'ArrowRight' && i < 5) document.getElementById('d'+(i+1)).focus();
+  });
+
+  box.addEventListener('paste', e => {
+    e.preventDefault();
+    const digits = e.clipboardData.getData('text').replace(/\D/g,'').slice(0,6);
+    digits.split('').forEach((ch, j) => {
+      const el = document.getElementById('d'+j);
+      if (el) { el.value = ch; el.classList.add('filled'); }
+    });
+    if (digits.length === 6) setTimeout(verifyOTP, 220);
+    else document.getElementById('d'+Math.min(digits.length, 5)).focus();
+  });
+});
+
+function getOTP() {
+  return ['d0','d1','d2','d3','d4','d5'].map(id => document.getElementById(id).value).join('');
+}
+
+function resetBoxes() {
+  ['d0','d1','d2','d3','d4','d5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.value = '';
+    el.classList.remove('filled','err-box');
+  });
+}
+
+function shakeBoxes() {
+  ['d0','d1','d2','d3','d4','d5'].forEach(id => {
+    const el = document.getElementById(id);
+    el.classList.add('err-box');
+    setTimeout(() => el.classList.remove('err-box'), 450);
+  });
+}
+
+// ══════════════════════════════════════════════════════════
+//  VERIFY
+// ══════════════════════════════════════════════════════════
+async function verifyOTP() {
+  const entered = getOTP();
+  if (entered.length < 6) { showErr('Please enter all 6 digits.'); return; }
+  if (attempts >= MAX_TRIES) { showErr('Too many attempts. Request a new OTP.'); return; }
+
+  // Loading state
+  const btn  = document.getElementById('verifyBtn');
+  const txt  = document.getElementById('verifyTxt');
+  const spin = document.getElementById('verifySpinner');
+  btn.disabled       = true;
+  txt.textContent    = 'Verifying…';
+  spin.style.display = 'block';
+
+  await new Promise(r => setTimeout(r, 650)); // UX delay
+
+  if (entered === currentOTP) {
+    // ✅ Correct
+    spin.style.display = 'none';
+    txt.textContent    = '✓ Verified!';
+    clearMsgs();
+    document.getElementById('otpOkMsg').textContent = '✅ Phone verified! Submitting your request…';
+    document.getElementById('otpOkMsg').style.display = 'block';
+    stopTimer();
+    setTimeout(() => window.location.href = 'page6-confirmation.html', 1300);
+  } else {
+    // ❌ Wrong
+    attempts++;
+    btn.disabled       = false;
+    spin.style.display = 'none';
+    txt.textContent    = 'Verify & Submit';
+    const left = MAX_TRIES - attempts;
+    if (left > 0) {
+      showErr('Wrong OTP. ' + left + ' attempt' + (left !== 1 ? 's' : '') + ' remaining.');
+    } else {
+      showErr('Too many incorrect attempts. Please request a new OTP.');
+      btn.disabled = true;
+    }
+    shakeBoxes();
+    resetBoxes();
+    document.getElementById('d0').focus();
+  }
+}
+
+// ══════════════════════════════════════════════════════════
+//  RESEND
+// ══════════════════════════════════════════════════════════
+async function resendOTP() {
+  const btn = document.getElementById('resendBtn');
+  btn.disabled = true;
+  btn.textContent = 'Sending…';
+  clearMsgs();
+  resetBoxes();
+  attempts = 0;
+  document.getElementById('verifyBtn').disabled    = false;
+  document.getElementById('verifyTxt').textContent = 'Verify & Submit';
+
+  const phone = document.getElementById('phone').value.replace(/[\s\-\+]/g,'');
+  currentOTP  = String(Math.floor(100000 + Math.random() * 900000));
+  console.log('%c🔐 Resent OTP (dev): ' + currentOTP, 'color:#2a9d8f;font-weight:bold');
+
+  const sent = await sendSMS(phone, currentOTP);
+  if (sent) {
+    document.getElementById('otpOkMsg').textContent = '📱 New OTP sent to your phone!';
+    document.getElementById('otpOkMsg').style.display = 'block';
+  } else {
+    showErr('Could not resend. Check console for OTP.');
   }
 
-  if (valid) {
-    sessionStorage.setItem('patientName',   name.value.trim());
-    sessionStorage.setItem('patientAge',    age.value);
-    sessionStorage.setItem('patientGender', gender.value);
-    sessionStorage.setItem('patientPhone',  phone.value.trim());
-    sessionStorage.setItem('patientEmail',  email.value.trim());
-    window.location.href = 'page6-confirmation.html';
-  }
+  btn.textContent = 'Resend OTP';
+  startTimer();
+}
+
+// ══════════════════════════════════════════════════════════
+//  30s COUNTDOWN TIMER
+// ══════════════════════════════════════════════════════════
+function startTimer() {
+  let secs = 30;
+  const countEl  = document.getElementById('timerCount');
+  const dispEl   = document.getElementById('timerDisplay');
+  const resendEl = document.getElementById('resendBtn');
+
+  dispEl.style.display   = 'inline';
+  resendEl.style.display = 'none';
+  countEl.textContent    = secs;
+
+  stopTimer();
+  countdown = setInterval(() => {
+    secs--;
+    countEl.textContent = secs;
+    if (secs <= 0) {
+      stopTimer();
+      dispEl.style.display   = 'none';
+      resendEl.style.display = 'inline';
+      resendEl.disabled      = false;
+    }
+  }, 1000);
+}
+
+function stopTimer() {
+  if (countdown) { clearInterval(countdown); countdown = null; }
+}
+
+// ══════════════════════════════════════════════════════════
+//  HELPERS
+// ══════════════════════════════════════════════════════════
+function showErr(msg) {
+  clearMsgs();
+  const el = document.getElementById('otpErrMsg');
+  el.textContent   = msg;
+  el.style.display = 'block';
+}
+function clearMsgs() {
+  document.getElementById('otpErrMsg').style.display = 'none';
+  document.getElementById('otpOkMsg').style.display  = 'none';
 }
 </script>
 </body>
