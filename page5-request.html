@@ -414,10 +414,7 @@
 </div>
 
 <script>
-// ╔══════════════════════════════════════════════════════════╗
-// ║  ⚠️  REPLACE WITH YOUR REAL FAST2SMS API KEY            ║
-// ║  Dashboard → https://www.fast2sms.com → Dev API         ║
-// ╚══════════════════════════════════════════════════════════╝
+// Fast2SMS API Key
 const FAST2SMS_KEY = 'CE9BLTlmYRnfKZ2AjM1xkJbi6zIwr3Fph5vV8gdsWcGQUD0HXtvCIsE8xNBV59oi7eGgcwL1U60yW2RD';
 
 // ── State ──────────────────────────────────────────────────
@@ -509,9 +506,6 @@ async function handleContinue() {
   // Generate OTP
   currentOTP = String(Math.floor(100000 + Math.random() * 900000));
 
-  // ── DEV NOTE: Remove this line before going live ──
-  console.log('%c🔐 OTP (dev only): ' + currentOTP, 'color:#2a9d8f;font-size:16px;font-weight:bold');
-
   const sent = await sendSMS(phone, currentOTP);
 
   // Restore button
@@ -520,35 +514,34 @@ async function handleContinue() {
   spin.style.display  = 'none';
   icon.style.display  = 'block';
 
-  // Show modal regardless (fallback for dev/testing)
-  maskPhone(phone);
-  openModal();
-  startTimer();
-
-  if (!sent) {
-    showErr('⚠️ SMS could not be delivered. Your OTP is in the browser console (dev mode).');
+  if (sent) {
+    maskPhone(phone);
+    openModal();
+    startTimer();
+  } else {
+    alert('\u274C Could not send OTP. Please check your number and try again.');
   }
 }
 
 // ══════════════════════════════════════════════════════════
-//  FAST2SMS — send OTP SMS
+//  FAST2SMS — GET request (avoids browser CORS issues)
+//  Uses query-string params which Fast2SMS supports
 // ══════════════════════════════════════════════════════════
 async function sendSMS(mobile, otp) {
   try {
-    const res = await fetch('https://www.fast2sms.com/dev/bulkV2', {
-      method : 'POST',
-      headers: {
-        'authorization' : FAST2SMS_KEY,
-        'Content-Type'  : 'application/json'
-      },
-      body: JSON.stringify({
-        route           : 'otp',   // Fast2SMS OTP route (no DLT needed)
-        variables_values: otp,     // 6-digit OTP
-        numbers         : mobile   // 10-digit Indian number
-      })
+    const params = new URLSearchParams({
+      authorization   : FAST2SMS_KEY,
+      route           : 'otp',
+      variables_values: otp,
+      numbers         : mobile,
+      flash           : '0'
+    });
+
+    const res  = await fetch('https://www.fast2sms.com/dev/bulkV2?' + params.toString(), {
+      method : 'GET'
     });
     const data = await res.json();
-    console.log('Fast2SMS:', data);
+    console.log('Fast2SMS response:', data);
     return data.return === true;
   } catch (err) {
     console.error('Fast2SMS error:', err);
@@ -698,14 +691,13 @@ async function resendOTP() {
 
   const phone = document.getElementById('phone').value.replace(/[\s\-\+]/g,'');
   currentOTP  = String(Math.floor(100000 + Math.random() * 900000));
-  console.log('%c🔐 Resent OTP (dev): ' + currentOTP, 'color:#2a9d8f;font-weight:bold');
 
   const sent = await sendSMS(phone, currentOTP);
   if (sent) {
     document.getElementById('otpOkMsg').textContent = '📱 New OTP sent to your phone!';
     document.getElementById('otpOkMsg').style.display = 'block';
   } else {
-    showErr('Could not resend. Check console for OTP.');
+    showErr('Could not resend SMS. Please try again.');
   }
 
   btn.textContent = 'Resend OTP';
