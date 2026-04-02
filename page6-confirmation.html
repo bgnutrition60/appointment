@@ -230,23 +230,22 @@
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, addDoc, serverTimestamp }
     from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAnalytics }
+    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
-  // ════════════════════════════════════════════════
-  // 🔧 PASTE YOUR FIREBASE CONFIG HERE
-  //    Firebase Console → Project Settings → Your Apps → Web
-  // ════════════════════════════════════════════════
   const firebaseConfig = {
-    apiKey:            "AIzaSyCchLfleDnJVGHopbQnYN4RoLFLpf_cTL0",
-    authDomain:        "wellpath-clinic.firebaseapp.com",
-    projectId:         "wellpath-clinic",
-    storageBucket:     "wellpath-clinic.firebasestorage.app",
-    messagingSenderId: "1012769542606",
-    appId:             "1:1012769542606:web:a8ceb76fc16bf460cadb9f"
+    apiKey:            "AIzaSyDbyB3rz5dPhR7tMaT9pVq_t0ms9qoPpGg",
+    authDomain:        "wellpath-clinic-480f4.firebaseapp.com",
+    projectId:         "wellpath-clinic-480f4",
+    storageBucket:     "wellpath-clinic-480f4.firebasestorage.app",
+    messagingSenderId: "1066784333306",
+    appId:             "1:1066784333306:web:017e3ed37ed7a3fa2b9843",
+    measurementId:     "G-NEM7B6DM68"
   };
-  // ════════════════════════════════════════════════
 
-  const app = initializeApp(firebaseConfig);
-  const db  = getFirestore(app);
+  const app       = initializeApp(firebaseConfig);
+  const analytics = getAnalytics(app);
+  const db        = getFirestore(app);
 
   // ── Pull everything from sessionStorage ──────
   const name    = sessionStorage.getItem('patientName')   || '';
