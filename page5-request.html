@@ -415,7 +415,11 @@
 
 <script>
 // Fast2SMS API Key
-const FAST2SMS_KEY = 'CE9BLTlmYRnfKZ2AjM1xkJbi6zIwr3Fph5vV8gdsWcGQUD0HXtvCIsE8xNBV59oi7eGgcwL1U60yW2RD';
+const FAST2SMS_KEY = 'CE9BLTlmYRnfKZ2AjM1xkJbi6zlwr3Fph5vV8gds';
+
+// ── Google Apps Script Web App URL (acts as your proxy) ──
+// This sends the OTP via Fast2SMS from Google's server (no CORS issue)
+const PROXY_URL = 'https://script.google.com/macros/s/AKfycbxhfqZQm3G14-VjI0LQRtip7U1O_9L-q6Yl41rFFEtTkYm4uOOnxDIFFY6qOu2_hzWO/exec';
 
 // ── State ──────────────────────────────────────────────────
 let currentOTP   = '';
@@ -524,27 +528,25 @@ async function handleContinue() {
 }
 
 // ══════════════════════════════════════════════════════════
-//  FAST2SMS — GET request (avoids browser CORS issues)
-//  Uses query-string params which Fast2SMS supports
+//  FAST2SMS via Google Apps Script Proxy
+//  (Browsers block direct Fast2SMS calls due to CORS.
+//   Google Apps Script acts as a server-side middleman.)
 // ══════════════════════════════════════════════════════════
 async function sendSMS(mobile, otp) {
   try {
+    // Build the URL with params for the Google Apps Script proxy
     const params = new URLSearchParams({
-      authorization   : FAST2SMS_KEY,
-      route           : 'otp',
-      variables_values: otp,
-      numbers         : mobile,
-      flash           : '0'
+      apiKey  : FAST2SMS_KEY,
+      mobile  : mobile,
+      otp     : otp
     });
 
-    const res  = await fetch('https://www.fast2sms.com/dev/bulkV2?' + params.toString(), {
-      method : 'GET'
-    });
+    const res  = await fetch(PROXY_URL + '?' + params.toString());
     const data = await res.json();
-    console.log('Fast2SMS response:', data);
-    return data.return === true;
+    console.log('SMS Proxy response:', data);
+    return data.success === true;
   } catch (err) {
-    console.error('Fast2SMS error:', err);
+    console.error('SMS send error:', err);
     return false;
   }
 }
